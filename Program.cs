@@ -15,7 +15,7 @@ namespace CorsaRacing
 
             // Configurar base de datos
             builder.Services.AddDbContext<Context>(options =>
-                options.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=CorsaRacing;Integrated Security=True;TrustServerCertificate=True"));
+                options.UseSqlServer("Server=tcp:corsaserver.database.windows.net,1433;Initial Catalog=CorsaRacingDB;Persist Security Info=False;User ID=adminmarti;Password=Ramonrubial61;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"));
 
             // Registrar repositorios y servicios en el contenedor de dependencias
             builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -32,17 +32,20 @@ namespace CorsaRacing
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-                    options.JsonSerializerOptions.WriteIndented = true; // Mejora legibilidad del JSON
+                    options.JsonSerializerOptions.WriteIndented = true;
                 });
 
             // Agregar servicio CORS
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAllOrigins", policy =>
+                options.AddPolicy("FrontendPolicy", policy =>
                 {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
+                    policy.WithOrigins(
+                        "http://localhost:3000",           // Desarrollo local
+                        "https://tuapp.vercel.app"        // Sustituye por el dominio real de Vercel cuando lo tengas
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
                 });
             });
 
@@ -60,8 +63,8 @@ namespace CorsaRacing
 
             app.UseRouting();
 
-            // Usar CORS
-            app.UseCors("AllowAllOrigins");
+            // Usar política CORS
+            app.UseCors("FrontendPolicy");
 
             app.UseAuthorization();
 
