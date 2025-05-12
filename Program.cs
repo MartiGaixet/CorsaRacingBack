@@ -13,11 +13,10 @@ namespace CorsaRacing
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Configurar base de datos
+            
             builder.Services.AddDbContext<Context>(options =>
-                options.UseSqlServer("Server=tcp:corsaserver.database.windows.net,1433;Initial Catalog=CorsaRacingDB;Persist Security Info=False;User ID=adminmarti;Password=Ramonrubial61;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"));
-
-            // Registrar repositorios y servicios en el contenedor de dependencias
+                options.UseSqlServer("preguntar a admin por contraseÃ±a y usuario");
+            
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IChampionshipRepository, ChampionshipRepository>();
@@ -27,7 +26,7 @@ namespace CorsaRacing
             builder.Services.AddScoped<IParticipationRaceRepository, ParticipationRaceRepository>();
             builder.Services.AddScoped<IParticipationRaceService, ParticipationRaceService>();
 
-            // Configurar controladores y JSON para evitar referencias circulares
+            
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -35,14 +34,14 @@ namespace CorsaRacing
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
 
-            // Agregar servicio CORS
+            
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("FrontendPolicy", policy =>
                 {
                     policy.WithOrigins(
-                        "http://localhost:3000",           // Desarrollo local
-                        "https://tuapp.vercel.app"        // Sustituye por el dominio real de Vercel cuando lo tengas
+                        "http://localhost:3000",           
+                        "https://corsaracing.vercel.app"
                     )
                     .AllowAnyHeader()
                     .AllowAnyMethod();
@@ -51,7 +50,7 @@ namespace CorsaRacing
 
             var app = builder.Build();
 
-            // Configurar el pipeline de la aplicación
+            
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -63,7 +62,7 @@ namespace CorsaRacing
 
             app.UseRouting();
 
-            // Usar política CORS
+            
             app.UseCors("FrontendPolicy");
 
             app.UseAuthorization();
